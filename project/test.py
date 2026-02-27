@@ -1,0 +1,258 @@
+import streamlit as st
+import pandas as pd
+import sqlite3
+import hashlib
+import os
+from groq import Groq
+
+# -------------------------
+# LOAD API KEY
+# -------------------------
+#try:
+    #groq_api_key = st.secrets["GROQ_API_KEY"]
+#except:
+    #st.error("Groq API key not found in Streamlit secrets.")
+    #st.stop()
+
+#client = Groq(api_key=groq_api_key)
+
+# -------------------------
+# PAGE CONFIG
+# -------------------------
+st.set_page_config(page_title="MedSafe AI Pro", page_icon="🩺", layout="centered")
+
+# -------------------------
+# STYLING
+# -------------------------
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #111827, #0f172a);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+}
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0b1c2d, #102a43, #0b1c2d) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# -------------------------
+# DATABASE SETUP
+# -------------------------
+conn = sqlite3.connect("database.db", check_same_thread=False)
+c = conn.cursor()
+
+c.execute("""CREATE TABLE IF NOT EXISTS users (
+    username TEXT PRIMARY KEY,
+    password TEXT
+)""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS history (
+    username TEXT,
+    drug1 TEXT,
+    drug2 TEXT,
+    result TEXT
+)""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS allergies (
+    username TEXT,
+    allergy TEXT
+)""")
+
+conn.commit()
+
+# -------------------------
+# PASSWORD HASH
+# -------------------------
+def hash_password(password):
+    return hashlib.sha256(password.strip().encode()).hexdigest()
+
+# -------------------------
+# AUTH FUNCTIONS
+# -------------------------
+def register_user(username, password):
+    try:
+        c.execute("INSERT INTO users VALUES (?, ?)",
+                  (username.strip().lower(), hash_password(password)))
+        conn.commit()
+        return True
+    except:
+        return False
+
+def login_user(username, password):
+    c.execute("SELECT * FROM users WHERE username=?",
+              (username.strip().lower(),))
+    user = c.fetchone()
+    return user and user[1] == hash_password(password)
+
+# -------------------------
+# ALLERGY FUNCTIONS
+# -------------------------
+def add_allergy(username, allergy):
+    c.execute("INSERT INTO allergies VALUES (?, ?)", (username, allergy.lower()))
+    conn.commit()
+
+def get_allergies(username):
+    c.execute("SELECT allergy FROM allergies WHERE username=?", (username,))
+    return [row[0] for row in c.fetchall()]
+
+# -------------------------
+# LOAD DRUG CSV
+# -------------------------
+if not os.path.exists("drug_interactions.csv"):
+    st.error("drug_interactions.csv file not found.")
+    st.stop()
+
+df = pd.read_csv("drug_interactions.csv")
+
+def check_interaction(d1, d2):
+    for _, row in df.iterrows():
+        if ((row['drug1'].lower() == d1.lower() and row['drug2'].lower() == d2.lower()) or
+            (row['drug1'].lower() == d2.lower() and row['drug2'].lower() == d1.lower())):
+            return row['severity'], row['reason']
+    return "Low", "No known major interaction."
+
+# -------------------------
+# SESSION STATE
+# -------------------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# -------------------------
+# LOGIN / REGISTER
+# -------------------------
+if not st.session_state.logged_in:
+
+    st.title("🩺 MedSafe AI Pro")
+    menu = st.radio("Select Option", ["Login", "Register"])
+
+    if menu == "Register":
+        new_user = st.text_input("Username")
+        new_pass = st.text_input("Password", type="password")
+        if st.button("Register"):
+            if register_user(new_user, new_pass):
+                st.success("Account created!")
+            else:
+                st.error("Username exists.")
+
+    if menu == "Login":
+        user = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if login_user(user, password):
+                st.session_state.logged_in = True
+                st.session_state.username = user.strip().lower()
+                st.rerun()
+            else:
+                st.error("Wrong credentials.")
+
+# -------------------------
+# MAIN DASHBOARD
+# -------------------------
+else:
+
+    username = st.session_state.username
+
+    st.sidebar.success(f"Welcome {username}")
+
+    if st.sidebar.button("Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
+
+    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat"])
+
+    # -------------------------
+    # DRUG CHECKER + RISK METER
+    # -------------------------
+    with tabs[0]:
+
+        drug_list = sorted(set(df['drug1'].tolist() + df['drug2'].tolist()))
+        drug1 = st.selectbox("Medicine 1", drug_list)
+        drug2 = st.selectbox("Medicine 2", drug_list)
+
+        if st.button("Analyze Interaction"):
+
+            severity, reason = check_interaction(drug1, drug2)
+
+            risk_score = {"Low": 25, "Moderate": 60, "High": 90}.get(severity, 20)
+
+            st.progress(risk_score)
+
+            if severity == "High":
+                st.error(f"🔴 High Risk: {reason}")
+            elif severity == "Moderate":
+                st.warning(f"🟡 Moderate Risk: {reason}")
+            else:
+                st.success(f"🟢 Low Risk: {reason}")
+
+            # Allergy Check
+            allergies = get_allergies(username)
+            if drug1.lower() in allergies or drug2.lower() in allergies:
+                st.error("⚠️ ALERT: This drug matches your recorded allergy!")
+
+    # -------------------------
+    # ALLERGY TRACKER
+    # -------------------------
+    with tabs[1]:
+
+        st.subheader("Your Recorded Allergies")
+
+        new_allergy = st.text_input("Add Allergy (e.g., aspirin, penicillin)")
+
+        if st.button("Add Allergy"):
+            add_allergy(username, new_allergy)
+            st.success("Allergy added.")
+
+        allergies = get_allergies(username)
+
+        if allergies:
+            for a in allergies:
+                st.write(f"• {a}")
+        else:
+            st.info("No allergies recorded.")
+
+    # -------------------------
+    # SIDE EFFECT ANALYZER
+    # -------------------------
+    with tabs[2]:
+
+        selected_drug = st.selectbox("Select Drug", drug_list)
+
+        if st.button("Analyze Side Effects"):
+            try:
+                response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "system", "content": "You are a medical safety assistant. List common and serious side effects. Do not diagnose."},
+                        {"role": "user", "content": f"List side effects of {selected_drug}"}
+                    ]
+                )
+                st.write(response.choices[0].message.content)
+            except Exception as e:
+                st.error(str(e))
+
+    # -------------------------
+    # AI CHAT
+    # -------------------------
+    with tabs[3]:
+
+        user_input = st.text_input("Ask a safety question")
+
+        if st.button("Send"):
+            try:
+                response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "system", "content": "You are a medical drug safety assistant. Always recommend consulting a doctor."},
+                        {"role": "user", "content": user_input}
+                    ]
+                )
+                st.write(response.choices[0].message.content)
+            except Exception as e:
+                st.error(str(e))
