@@ -175,7 +175,8 @@ if not st.session_state.logged_in:
         user = st.text_input("Username")
         password = st.text_input("Password", type="password")
 
-        if st.button("Login"):
+        if st.button("🚀 Login / Signup", key="landing_login_button"):
+            
             if login_user(user, password):
                 st.session_state.logged_in = True
                 st.session_state.username = user.strip().lower()
@@ -260,3 +261,4 @@ else:
                 st.markdown(f"<div style='text-align:right;background:#1f6f78;color:white;padding:10px;border-radius:15px;margin:5px;max-width:75%;margin-left:auto;'><b>You:</b><br>{message}</div>", unsafe_allow_html=True)
             else:
                 st.markdown(f"<div style='text-align:left;background:#1b3a41;color:#2EC4B6;padding:10px;border-radius:15px;margin:5px;max-width:75%;'><b>MedSafe AI:</b><br>{message}</div>", unsafe_allow_html=True)
+
