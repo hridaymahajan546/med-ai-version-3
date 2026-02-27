@@ -117,7 +117,7 @@ st.write("")
 
 col1, col2, col3 = st.columns([1,2,1])
 with col2:
-    if st.button("🚀 Login / Signup"):
+    if st.button("🚀 Login / Signup", key="landings_login_button"):
         go_to_login()
 
 # ---- ABOUT SECTION ----
@@ -212,3 +212,4 @@ st.markdown("""
 Made with ❤️ using Streamlit | MedSafe AI Official Platform
 </div>
 """, unsafe_allow_html=True)
+
