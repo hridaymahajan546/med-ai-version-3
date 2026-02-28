@@ -4,9 +4,6 @@ import base64
 st.set_page_config(page_title="MedSafe AI", layout="wide")
 
 # ---- Redirect Function ----
-if st.button("🚀 Login / Signup"):
-    st.experimental_set_query_params(page="index")
-    st.switch_page("pages/index.py")
 
 # ---- CSS Styling ----
 st.markdown("""
@@ -117,8 +114,12 @@ st.write("")
 
 col1, col2, col3 = st.columns([1,2,1])
 with col2:
-    if st.button("🚀 Login / Signup", key="landings_login_button"):
-        go_to_login()
+    if st.button("🚀 Login / Signup", key="login_button"):
+         st.switch_page("pages/index.py")
+        
+        
+            
+
 
 # ---- ABOUT SECTION ----
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
@@ -212,4 +213,6 @@ st.markdown("""
 Made with ❤️ using Streamlit | MedSafe AI Official Platform
 </div>
 """, unsafe_allow_html=True)
+
+
 
