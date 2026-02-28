@@ -282,6 +282,17 @@ else:
         conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
         c2 = conn2.cursor()
 
+        c2.execute("PRAGMA table_info(reminders)")
+        columns = [col[1] for col in c2.fetchall()]
+
+        if "username" not in columns:
+            
+            c2.execute("ALTER TABLE reminders ADD COLUMN username TEXT")
+            conn2.commit()
+            st.success("Username column added successfully!")
+
+        conn2.close()
+
         c2.execute("""
         CREATE TABLE IF NOT EXISTS reminders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -366,6 +377,7 @@ else:
 
               
              
+
 
 
 
