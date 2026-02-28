@@ -69,6 +69,24 @@ c.execute("""CREATE TABLE IF NOT EXISTS allergies (
 conn.commit()
 
 # -------------------------
+# REMINDERS DATABASE (initialized once, safely)
+# -------------------------
+conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
+c2 = conn2.cursor()
+c2.execute("""
+CREATE TABLE IF NOT EXISTS reminders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    medicine TEXT,
+    dosage TEXT,
+    reminder_date TEXT,
+    reminder_time TEXT
+)
+""")
+conn2.commit()
+conn2.close()
+
+# -------------------------
 # PASSWORD HASH
 # -------------------------
 def hash_password(password):
@@ -165,38 +183,140 @@ else:
         "⚠️ Allergies",
         "🩹 Side Effects",
         "🤖 AI Chat",
-        "REMINDER",
-        "TODAY'S REMINDER"
+        "⏰ REMINDER",
+        "📅 TODAY'S REMINDER"
     ])
 
     # -------------------------
-    # REMINDER DATABASE (AUTO FIX)
+    # TAB 1: DRUG CHECKER
     # -------------------------
-    conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
-    c2 = conn2.cursor()
+    with tabs[0]:
+        st.subheader("💊 Drug Interaction Checker")
 
-    # DROP old broken table safely
-    c2.execute("DROP TABLE IF EXISTS reminders")
+        drug1 = st.text_input("Enter First Drug", key="drug1")
+        drug2 = st.text_input("Enter Second Drug", key="drug2")
 
-    # Create fresh correct structure
-    c2.execute("""
-    CREATE TABLE reminders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        medicine TEXT,
-        dosage TEXT,
-        reminder_date TEXT,
-        reminder_time TEXT
-    )
-    """)
-    conn2.commit()
-    conn2.close()
+        if st.button("Check Interaction"):
+            if drug1 and drug2:
+                severity, reason = check_interaction(drug1, drug2)
+
+                if severity.lower() == "high":
+                    st.error(f"⚠️ HIGH Severity Interaction\n\n{reason}")
+                elif severity.lower() == "moderate":
+                    st.warning(f"⚠️ MODERATE Severity Interaction\n\n{reason}")
+                else:
+                    st.success(f"✅ LOW / No Major Interaction\n\n{reason}")
+
+                # Save to history
+                c.execute("INSERT INTO history VALUES (?, ?, ?, ?)",
+                          (username, drug1, drug2, f"{severity}: {reason}"))
+                conn.commit()
+            else:
+                st.warning("Please enter both drug names.")
+
+        st.markdown("---")
+        st.subheader("📋 Check History")
+        c.execute("SELECT drug1, drug2, result FROM history WHERE username=?", (username,))
+        history_rows = c.fetchall()
+        if history_rows:
+            for h in history_rows:
+                st.write(f"**{h[0]}** + **{h[1]}** → {h[2]}")
+        else:
+            st.info("No history yet.")
 
     # -------------------------
-    # REMINDER TAB
+    # TAB 2: ALLERGIES
+    # -------------------------
+    with tabs[1]:
+        st.subheader("⚠️ Manage Allergies")
+
+        new_allergy = st.text_input("Add a new allergy (drug/substance name)")
+        if st.button("Add Allergy"):
+            if new_allergy.strip():
+                add_allergy(username, new_allergy.strip())
+                st.success(f"Allergy '{new_allergy}' added!")
+            else:
+                st.warning("Please enter an allergy name.")
+
+        st.markdown("---")
+        st.subheader("Your Allergies")
+        allergies = get_allergies(username)
+        if allergies:
+            for a in allergies:
+                st.write(f"🔴 {a.capitalize()}")
+        else:
+            st.info("No allergies recorded.")
+
+    # -------------------------
+    # TAB 3: SIDE EFFECTS
+    # -------------------------
+    with tabs[2]:
+        st.subheader("🩹 Side Effects Lookup")
+
+        drug_se = st.text_input("Enter Drug Name to look up side effects")
+        if st.button("Look Up Side Effects"):
+            if drug_se.strip():
+                with st.spinner("Fetching side effects..."):
+                    try:
+                        response = client.chat.completions.create(
+                            model="llama3-8b-8192",
+                            messages=[
+                                {"role": "system", "content": "You are a medical assistant. Provide clear, concise side effects of medications. Always advise consulting a doctor."},
+                                {"role": "user", "content": f"What are the common and serious side effects of {drug_se}?"}
+                            ]
+                        )
+                        result = response.choices[0].message.content
+                        st.markdown(result)
+                    except Exception as e:
+                        st.error(f"Error fetching side effects: {e}")
+            else:
+                st.warning("Please enter a drug name.")
+
+    # -------------------------
+    # TAB 4: AI CHAT
+    # -------------------------
+    with tabs[3]:
+        st.subheader("🤖 AI Medical Assistant")
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        user_msg = st.text_input("Ask a medical question...", key="chat_input")
+
+        if st.button("Send"):
+            if user_msg.strip():
+                st.session_state.chat_history.append({"role": "user", "content": user_msg})
+
+                with st.spinner("Thinking..."):
+                    try:
+                        messages = [
+                            {"role": "system", "content": "You are MedSafe AI, a helpful medical assistant. Provide accurate health information and always remind users to consult a healthcare professional for medical decisions."}
+                        ] + st.session_state.chat_history
+
+                        response = client.chat.completions.create(
+                            model="llama3-8b-8192",
+                            messages=messages
+                        )
+                        reply = response.choices[0].message.content
+                        st.session_state.chat_history.append({"role": "assistant", "content": reply})
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+
+        # Display chat history
+        for msg in st.session_state.chat_history:
+            if msg["role"] == "user":
+                st.markdown(f"**🧑 You:** {msg['content']}")
+            else:
+                st.markdown(f"**🤖 MedSafe AI:** {msg['content']}")
+
+        if st.button("Clear Chat"):
+            st.session_state.chat_history = []
+            st.rerun()
+
+    # -------------------------
+    # TAB 5: REMINDER
     # -------------------------
     with tabs[4]:
-
         conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
         c2 = conn2.cursor()
 
@@ -219,15 +339,14 @@ else:
                     conn2.commit()
                     st.success("✅ Reminder Saved Successfully!")
                 else:
-                    st.warning("Please fill all fields")
+                    st.warning("Please fill all fields.")
 
         conn2.close()
 
     # -------------------------
-    # TODAY'S REMINDER TAB
+    # TAB 6: TODAY'S REMINDER
     # -------------------------
     with tabs[5]:
-
         conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
         c2 = conn2.cursor()
 
