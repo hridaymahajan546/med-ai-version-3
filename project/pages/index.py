@@ -165,7 +165,7 @@ else:
         st.session_state.logged_in = False
         st.rerun()
 
-    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat"])
+    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat","REMINDER"])
 
     # -------------------------
     # DRUG CHECKER + RISK METER
@@ -374,6 +374,7 @@ else:
 
               
              
+
 
 
 
