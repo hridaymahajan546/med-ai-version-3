@@ -8,13 +8,13 @@ from groq import Groq
 # -------------------------
 # LOAD API KEY
 # -------------------------
-try:
-    groq_api_key = st.secrets["GROQ_API_KEY"]
-except:
-    st.error("Groq API key not found in Streamlit secrets.")
-    st.stop()
+#try:
+    #groq_api_key = st.secrets["GROQ_API_KEY"]
+#except:
+    #st.error("Groq API key not found in Streamlit secrets.")
+    #st.stop()
 
-client = Groq(api_key=groq_api_key)
+#client = Groq(api_key=groq_api_key)
 
 # -------------------------
 # PAGE CONFIG
@@ -256,5 +256,8 @@ else:
                 st.write(response.choices[0].message.content)
             except Exception as e:
                 st.error(str(e))
+
+              
              
+
 
