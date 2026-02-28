@@ -1,0 +1,217 @@
+drug1,drug2,severity,reason
+ibuprofen,warfarin,High,Increases bleeding risk
+paracetamol,alcohol,Moderate,Liver damage risk
+aspirin,warfarin,High,Severe bleeding risk
+metformin,contrast_dye,High,Risk of kidney damage
+lisinopril,potassium,Moderate,May cause high potassium levels
+amoxicillin,methotrexate,Moderate,Increases toxicity risk
+atorvastatin,clarithromycin,High,Muscle damage risk
+insulin,beta_blockers,Moderate,May mask low blood sugar symptoms
+tramadol,antidepressants,High,Risk of serotonin syndrome
+diazepam,opioids,High,Severe respiratory depression risk
+paracetamol,ibuprofen,Safe,Generally safe when taken in recommended doses
+cetirizine,paracetamol,Safe,No major interaction reported
+omeprazole,paracetamol,Safe,No significant interaction
+azithromycin,antacids,Moderate,Reduces antibiotic effectiveness
+levothyroxine,calcium,Moderate,Reduces thyroid medicine absorption
+drug1,drug2,severity,reason
+Paracetamol,Insulin,High,Severe respiratory depression possible
+Atorvastatin,Levothyroxine,Low,May cause mild dizziness
+Ranitidine,Furosemide,High,Severe bleeding risk
+Losartan,Prednisone,Low,May slightly reduce effectiveness
+Lisinopril,Tramadol,High,Dangerous increase in blood potassium levels
+Lisinopril,Hydrochlorothiazide,Moderate,Increases risk of bleeding
+Insulin,Propranolol,Moderate,Risk of blood pressure fluctuation
+Atorvastatin,Fluoxetine,Moderate,Risk of blood pressure fluctuation
+Losartan,Ibuprofen,Low,Mild gastrointestinal discomfort possible
+Clopidogrel,Furosemide,Low,May cause mild dizziness
+Clarithromycin,Propranolol,Low,Minor absorption interference
+Ranitidine,Clarithromycin,High,High risk of kidney failure
+Ibuprofen,Hydrochlorothiazide,High,Severe bleeding risk
+Atorvastatin,Azithromycin,High,Risk of life-threatening arrhythmia
+Atorvastatin,Paracetamol,Moderate,May cause moderate kidney stress
+Lisinopril,Ciprofloxacin,High,Severe bleeding risk
+Clopidogrel,Propranolol,High,High risk of kidney failure
+Warfarin,Ciprofloxacin,High,Dangerous increase in blood potassium levels
+Furosemide,Hydrochlorothiazide,Low,May cause mild dizziness
+Amlodipine,Clarithromycin,High,Risk of life-threatening arrhythmia
+Alprazolam,Amlodipine,High,High risk of kidney failure
+Insulin,Aspirin,High,Dangerous increase in blood potassium levels
+Warfarin,Morphine,High,Severe respiratory depression possible
+Amlodipine,Atorvastatin,Low,May cause mild dizziness
+Clarithromycin,Insulin,High,Dangerous increase in blood potassium levels
+Omeprazole,Alprazolam,High,Risk of life-threatening arrhythmia
+Tramadol,Insulin,Low,May slightly reduce effectiveness
+Tramadol,Doxycycline,Low,May slightly reduce effectiveness
+Ciprofloxacin,Prednisone,Low,Minor absorption interference
+Aspirin,Morphine,High,Severe bleeding risk
+Warfarin,Propranolol,Low,May cause mild dizziness
+Omeprazole,Atorvastatin,Low,May cause mild dizziness
+Codeine,Amlodipine,Moderate,Risk of blood pressure fluctuation
+Prednisone,Warfarin,High,Severe bleeding risk
+Sertraline,Warfarin,High,Dangerous increase in blood potassium levels
+Codeine,Warfarin,High,Severe bleeding risk
+Clarithromycin,Morphine,High,Severe bleeding risk
+Propranolol,Sertraline,Moderate,May cause moderate kidney stress
+Warfarin,Azithromycin,Moderate,May cause liver enzyme elevation
+Morphine,Insulin,Low,May cause mild dizziness
+Digoxin,Prednisone,High,High risk of kidney failure
+Morphine,Furosemide,High,Severe respiratory depression possible
+Insulin,Amoxicillin,Low,May cause mild dizziness
+Azithromycin,Clarithromycin,Low,May slightly reduce effectiveness
+Ibuprofen,Digoxin,Moderate,May cause moderate kidney stress
+Paracetamol,Warfarin,Moderate,May cause moderate kidney stress
+Digoxin,Aspirin,Low,Mild gastrointestinal discomfort possible
+Fluoxetine,Metformin,Low,Minor absorption interference
+Omeprazole,Furosemide,High,Severe bleeding risk
+Insulin,Warfarin,High,High risk of kidney failure
+Levothyroxine,Clopidogrel,Low,May slightly reduce effectiveness
+Doxycycline,Atorvastatin,Moderate,May increase sedation
+Amlodipine,Metformin,High,Dangerous increase in blood potassium levels
+Clopidogrel,Amoxicillin,Moderate,Risk of blood pressure fluctuation
+Morphine,Azithromycin,Low,Mild gastrointestinal discomfort possible
+Morphine,Clopidogrel,Moderate,May cause liver enzyme elevation
+Hydrochlorothiazide,Omeprazole,Moderate,May cause liver enzyme elevation
+Tramadol,Fluoxetine,Low,May slightly reduce effectiveness
+Clarithromycin,Hydrochlorothiazide,High,Risk of life-threatening arrhythmia
+Ibuprofen,Amlodipine,High,Dangerous increase in blood potassium levels
+Propranolol,Morphine,Low,May slightly reduce effectiveness
+Tramadol,Ranitidine,High,Risk of life-threatening arrhythmia
+Insulin,Prednisone,Moderate,May increase sedation
+Amlodipine,Warfarin,High,Dangerous increase in blood potassium levels
+Ciprofloxacin,Doxycycline,Low,May slightly reduce effectiveness
+Tramadol,Ciprofloxacin,Moderate,May increase sedation
+Prednisone,Furosemide,Moderate,Increases risk of bleeding
+Digoxin,Alprazolam,Low,May slightly reduce effectiveness
+Aspirin,Metformin,High,Severe respiratory depression possible
+Alprazolam,Prednisone,Moderate,May cause liver enzyme elevation
+Insulin,Lisinopril,Low,May slightly reduce effectiveness
+Warfarin,Tramadol,Moderate,May increase sedation
+Amoxicillin,Digoxin,High,Severe bleeding risk
+Hydrochlorothiazide,Azithromycin,Moderate,May increase sedation
+Doxycycline,Metformin,Low,Mild gastrointestinal discomfort possible
+Levothyroxine,Clarithromycin,High,Dangerous increase in blood potassium levels
+Morphine,Lisinopril,Moderate,Risk of blood pressure fluctuation
+Clarithromycin,Ciprofloxacin,High,High risk of kidney failure
+Clopidogrel,Atorvastatin,Moderate,Increases risk of bleeding
+Clarithromycin,Furosemide,High,Severe bleeding risk
+Hydrochlorothiazide,Propranolol,High,Dangerous increase in blood potassium levels
+Fluoxetine,Lisinopril,Moderate,May cause moderate kidney stress
+Clopidogrel,Digoxin,Moderate,May cause moderate kidney stress
+Insulin,Azithromycin,Low,May slightly reduce effectiveness
+Omeprazole,Morphine,High,Severe respiratory depression possible
+Furosemide,Ciprofloxacin,Low,Minor absorption interference
+Morphine,Hydrochlorothiazide,High,Dangerous increase in blood potassium levels
+Insulin,Omeprazole,Moderate,Risk of blood pressure fluctuation
+Ibuprofen,Clarithromycin,Moderate,Increases risk of bleeding
+Propranolol,Alprazolam,Moderate,Risk of blood pressure fluctuation
+Lisinopril,Levothyroxine,Low,Minor absorption interference
+Tramadol,Sertraline,High,Severe bleeding risk
+Aspirin,Warfarin,Low,Mild gastrointestinal discomfort possible
+Ibuprofen,Furosemide,Low,Mild gastrointestinal discomfort possible
+Insulin,Losartan,Moderate,May cause liver enzyme elevation
+Clopidogrel,Warfarin,High,Dangerous increase in blood potassium levels
+Digoxin,Lisinopril,Moderate,Increases risk of bleeding
+Doxycycline,Sertraline,Low,May cause mild dizziness
+Clopidogrel,Sertraline,Moderate,Risk of blood pressure fluctuation
+Prednisone,Hydrochlorothiazide,Low,May cause mild dizziness
+Amoxicillin,Hydrochlorothiazide,Moderate,May increase sedation
+Fluoxetine,Morphine,Moderate,Increases risk of bleeding
+Amlodipine,Ciprofloxacin,High,Severe bleeding risk
+Tramadol,Codeine,High,Risk of life-threatening arrhythmia
+Losartan,Aspirin,High,Severe bleeding risk
+Ciprofloxacin,Clopidogrel,Moderate,May cause liver enzyme elevation
+Propranolol,Ciprofloxacin,Moderate,May increase sedation
+Doxycycline,Amlodipine,Moderate,May increase sedation
+Tramadol,Omeprazole,Low,May slightly reduce effectiveness
+Fluoxetine,Digoxin,Moderate,May cause moderate kidney stress
+Digoxin,Doxycycline,High,Dangerous increase in blood potassium levels
+Insulin,Doxycycline,Low,Mild gastrointestinal discomfort possible
+Omeprazole,Lisinopril,High,Severe bleeding risk
+Ranitidine,Atorvastatin,Moderate,May increase sedation
+Levothyroxine,Insulin,Low,Minor absorption interference
+Clopidogrel,Aspirin,Low,May cause mild dizziness
+Azithromycin,Amlodipine,Moderate,May increase sedation
+Clarithromycin,Digoxin,Low,Minor absorption interference
+Metformin,Paracetamol,High,Risk of life-threatening arrhythmia
+Losartan,Hydrochlorothiazide,Low,Mild gastrointestinal discomfort possible
+Alprazolam,Ciprofloxacin,High,Severe respiratory depression possible
+Insulin,Metformin,High,Severe respiratory depression possible
+Codeine,Alprazolam,High,High risk of kidney failure
+Omeprazole,Doxycycline,High,Severe bleeding risk
+Omeprazole,Ibuprofen,Low,Mild gastrointestinal discomfort possible
+Clopidogrel,Codeine,Low,May slightly reduce effectiveness
+Ranitidine,Digoxin,Moderate,May cause moderate kidney stress
+Hydrochlorothiazide,Paracetamol,Low,May slightly reduce effectiveness
+Furosemide,Paracetamol,Low,Mild gastrointestinal discomfort possible
+Insulin,Clopidogrel,Low,May cause mild dizziness
+Azithromycin,Digoxin,High,High risk of kidney failure
+Azithromycin,Ibuprofen,High,Dangerous increase in blood potassium levels
+Losartan,Tramadol,Low,May cause mild dizziness
+Lisinopril,Alprazolam,Moderate,May cause liver enzyme elevation
+Amoxicillin,Ranitidine,High,High risk of kidney failure
+Morphine,Metformin,High,High risk of kidney failure
+Ibuprofen,Insulin,High,Dangerous increase in blood potassium levels
+Tramadol,Prednisone,Low,Minor absorption interference
+Doxycycline,Morphine,Moderate,Risk of blood pressure fluctuation
+Sertraline,Insulin,High,Risk of life-threatening arrhythmia
+Metformin,Alprazolam,Moderate,Risk of blood pressure fluctuation
+Paracetamol,Losartan,Moderate,May cause moderate kidney stress
+Atorvastatin,Propranolol,High,Severe bleeding risk
+Paracetamol,Doxycycline,Moderate,Increases risk of bleeding
+Atorvastatin,Furosemide,Low,Mild gastrointestinal discomfort possible
+Furosemide,Metformin,Moderate,Increases risk of bleeding
+Lisinopril,Codeine,High,Dangerous increase in blood potassium levels
+Insulin,Furosemide,Moderate,May cause liver enzyme elevation
+Aspirin,Tramadol,High,Dangerous increase in blood potassium levels
+Hydrochlorothiazide,Aspirin,Low,Minor absorption interference
+Codeine,Losartan,Moderate,May cause moderate kidney stress
+Morphine,Sertraline,Moderate,Increases risk of bleeding
+Ibuprofen,Doxycycline,High,Severe bleeding risk
+Morphine,Ranitidine,High,High risk of kidney failure
+Atorvastatin,Lisinopril,Moderate,May cause liver enzyme elevation
+Omeprazole,Clopidogrel,High,Risk of life-threatening arrhythmia
+Digoxin,Ciprofloxacin,Low,May cause mild dizziness
+Insulin,Codeine,Low,May cause mild dizziness
+Insulin,Ranitidine,High,High risk of kidney failure
+Tramadol,Clopidogrel,High,Severe bleeding risk
+Codeine,Ranitidine,Low,May slightly reduce effectiveness
+Sertraline,Codeine,High,Dangerous increase in blood potassium levels
+Clopidogrel,Amlodipine,Moderate,May cause moderate kidney stress
+Hydrochlorothiazide,Insulin,Low,May slightly reduce effectiveness
+Prednisone,Ranitidine,Low,Minor absorption interference
+Paracetamol,Propranolol,High,Risk of life-threatening arrhythmia
+Paracetamol,Alprazolam,Low,May slightly reduce effectiveness
+Amlodipine,Prednisone,High,Severe bleeding risk
+Fluoxetine,Codeine,Low,Minor absorption interference
+Ibuprofen,Warfarin,Moderate,May increase sedation
+Clarithromycin,Warfarin,Low,Minor absorption interference
+Amlodipine,Tramadol,High,High risk of kidney failure
+Lisinopril,Furosemide,Low,May cause mild dizziness
+Losartan,Doxycycline,Low,May cause mild dizziness
+Furosemide,Losartan,Moderate,Increases risk of bleeding
+Omeprazole,Digoxin,High,Risk of life-threatening arrhythmia
+Insulin,Amlodipine,Low,May slightly reduce effectiveness
+Amoxicillin,Levothyroxine,Low,Mild gastrointestinal discomfort possible
+Lisinopril,Clarithromycin,Moderate,May increase sedation
+Lisinopril,Ibuprofen,Moderate,May cause liver enzyme elevation
+Metformin,Clarithromycin,High,Dangerous increase in blood potassium levels
+Fluoxetine,Ibuprofen,Moderate,May cause liver enzyme elevation
+Digoxin,Hydrochlorothiazide,Low,May slightly reduce effectiveness
+Atorvastatin,Sertraline,High,Severe respiratory depression possible
+Amoxicillin,Metformin,Moderate,May cause moderate kidney stress
+Tramadol,Levothyroxine,High,Severe respiratory depression possible
+Morphine,Losartan,High,Dangerous increase in blood potassium levels
+Alprazolam,Losartan,Moderate,Increases risk of bleeding
+Aspirin,Lisinopril,Moderate,May cause moderate kidney stress
+Alprazolam,Azithromycin,Moderate,May cause moderate kidney stress
+Doxycycline,Clopidogrel,Moderate,Increases risk of bleeding
+Codeine,Furosemide,High,Severe respiratory depression possible
+Lisinopril,Losartan,High,Risk of life-threatening arrhythmia
+Digoxin,Insulin,Low,Mild gastrointestinal discomfort possible
+Omeprazole,Amlodipine,Moderate,Increases risk of bleeding
+Fluoxetine,Insulin,High,Risk of life-threatening arrhythmia
+Sertraline,Amoxicillin,High,High risk of kidney failure
+Amoxicillin,Amlodipine,Low,Mild gastrointestinal discomfort possible
+Levothyroxine,Ranitidine,High,Risk of life-threatening arrhythmia
+Sertraline,Losartan,High,Severe respiratory depression possible
