@@ -241,26 +241,43 @@ else:
     # AI CHAT
     # -------------------------
     with tabs[3]:
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
 
-        user_input = st.text_input("Ask a safety question")
+        user_input = st.text_input("Ask a medical safety question")
 
         if st.button("Send"):
-            try:
-                response = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[
-                        {"role": "system", "content": "You are a medical drug safety assistant. Always recommend consulting a doctor."},
-                        {"role": "user", "content": user_input}
-                    ]
-                )
-                st.write(response.choices[0].message.content)
-            except Exception as e:
-                st.error(str(e))
+            if user_input:
+                try:
+                    response = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[
+                            {"role": "system", "content": "You are a medical drug safety assistant. Do not diagnose or prescribe. Always recommend consulting a certified doctor."},
+                            {"role": "user", "content": user_input}
+                        ]
+                    )
+
+                    ai_reply = response.choices[0].message.content
+
+                except Exception as e:
+                    ai_reply = f"Error: {str(e)}"
+
+                st.session_state.chat_history.append(("You", user_input))
+                st.session_state.chat_history.append(("MedSafe AI", ai_reply))
+
+        for speaker, message in st.session_state.chat_history:
+            if speaker == "You":
+                st.markdown(f"<div style='text-align:right;background:#1f6f78;color:white;padding:10px;border-radius:15px;margin:5px;max-width:75%;margin-left:auto;'><b>You:</b><br>{message}</div>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div style='text-align:left;background:#1b3a41;color:#2EC4B6;padding:10px;border-radius:15px;margin:5px;max-width:75%;'><b>MedSafe AI:</b><br>{message}</div>", unsafe_allow_html=True)
+
+       
 
 
 
               
              
+
 
 
 
