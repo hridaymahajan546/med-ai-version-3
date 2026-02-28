@@ -4,11 +4,10 @@ import sqlite3
 import hashlib
 import os
 from groq import Groq
-import sqlite3
 from datetime import date
 
 # -------------------------
-#LOAD API KEY
+# LOAD API KEY
 # -------------------------
 try:
     groq_api_key = st.secrets["GROQ_API_KEY"]
@@ -167,10 +166,17 @@ else:
         st.session_state.logged_in = False
         st.rerun()
 
-    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat","REMINDER","TODAY'S REMINDER"])
+    tabs = st.tabs([
+        "💊 Drug Checker",
+        "⚠️ Allergies",
+        "🩹 Side Effects",
+        "🤖 AI Chat",
+        "REMINDER",
+        "TODAY'S REMINDER"
+    ])
 
     # -------------------------
-    # DRUG CHECKER + RISK METER
+    # DRUG CHECKER
     # -------------------------
     with tabs[0]:
 
@@ -193,19 +199,18 @@ else:
             else:
                 st.success(f"🟢 Low Risk: {reason}")
 
-            # Allergy Check
             allergies = get_allergies(username)
             if drug1.lower() in allergies or drug2.lower() in allergies:
                 st.error("⚠️ ALERT: This drug matches your recorded allergy!")
 
     # -------------------------
-    # ALLERGY TRACKER
+    # ALLERGIES
     # -------------------------
     with tabs[1]:
 
         st.subheader("Your Recorded Allergies")
 
-        new_allergy = st.text_input("Add Allergy (e.g., aspirin, penicillin)")
+        new_allergy = st.text_input("Add Allergy")
 
         if st.button("Add Allergy"):
             add_allergy(username, new_allergy)
@@ -220,7 +225,7 @@ else:
             st.info("No allergies recorded.")
 
     # -------------------------
-    # SIDE EFFECT ANALYZER
+    # SIDE EFFECTS
     # -------------------------
     with tabs[2]:
 
@@ -231,7 +236,7 @@ else:
                 response = client.chat.completions.create(
                     model="llama-3.1-8b-instant",
                     messages=[
-                        {"role": "system", "content": "You are a medical safety assistant. List common and serious side effects. Do not diagnose."},
+                        {"role": "system", "content": "You are a medical safety assistant."},
                         {"role": "user", "content": f"List side effects of {selected_drug}"}
                     ]
                 )
@@ -243,6 +248,7 @@ else:
     # AI CHAT
     # -------------------------
     with tabs[3]:
+
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
 
@@ -254,13 +260,11 @@ else:
                     response = client.chat.completions.create(
                         model="llama-3.1-8b-instant",
                         messages=[
-                            {"role": "system", "content": "You are a medical drug safety assistant. Do not diagnose or prescribe. Always recommend consulting a certified doctor."},
+                            {"role": "system", "content": "You are a medical safety assistant."},
                             {"role": "user", "content": user_input}
                         ]
                     )
-
                     ai_reply = response.choices[0].message.content
-
                 except Exception as e:
                     ai_reply = f"Error: {str(e)}"
 
@@ -268,91 +272,85 @@ else:
                 st.session_state.chat_history.append(("MedSafe AI", ai_reply))
 
         for speaker, message in st.session_state.chat_history:
-            if speaker == "You":
-                st.markdown(f"<div style='text-align:right;background:#1f6f78;color:white;padding:10px;border-radius:15px;margin:5px;max-width:75%;margin-left:auto;'><b>You:</b><br>{message}</div>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<div style='text-align:left;background:#1b3a41;color:#2EC4B6;padding:10px;border-radius:15px;margin:5px;max-width:75%;'><b>MedSafe AI:</b><br>{message}</div>", unsafe_allow_html=True)
+            st.write(f"**{speaker}:** {message}")
 
-
-    
+    # -------------------------
+    # REMINDER TAB
+    # -------------------------
     with tabs[4]:
-        conn = sqlite3.connect("reminders.db", check_same_thread=False)
-        c = conn.cursor()
 
-        c.execute("""
+        conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
+        c2 = conn2.cursor()
+
+        c2.execute("""
         CREATE TABLE IF NOT EXISTS reminders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
             medicine TEXT,
             dosage TEXT,
             reminder_date TEXT,
             reminder_time TEXT
-)
-""")
-conn.commit()
+        )
+        """)
+        conn2.commit()
 
-st.subheader("⏰ Add Medication Reminder")
+        st.subheader("⏰ Add Medication Reminder")
 
-with st.form("reminder_form"):
-    med_name = st.text_input("Medicine Name")
-    dosage = st.text_input("Dosage")
-    reminder_date = st.date_input("Select Date", value=date.today())
-    reminder_time = st.time_input("Select Time")
+        with st.form("reminder_form"):
+            med_name = st.text_input("Medicine Name")
+            dosage = st.text_input("Dosage")
+            reminder_date = st.date_input("Select Date", value=date.today())
+            reminder_time = st.time_input("Select Time")
 
-    submit = st.form_submit_button("Save Reminder")
+            submit = st.form_submit_button("Save Reminder")
 
-    if submit:
-        if med_name and dosage:
-            c.execute(
-                "INSERT INTO reminders (medicine, dosage, reminder_date, reminder_time) VALUES (?, ?, ?, ?)",
-                (med_name, dosage, str(reminder_date), str(reminder_time))
-            )
-            conn.commit()
-            st.success("✅ Reminder Saved Successfully!")
+            if submit:
+                if med_name and dosage:
+                    c2.execute(
+                        "INSERT INTO reminders (username, medicine, dosage, reminder_date, reminder_time) VALUES (?, ?, ?, ?, ?)",
+                        (username, med_name, dosage, str(reminder_date), str(reminder_time))
+                    )
+                    conn2.commit()
+                    st.success("✅ Reminder Saved Successfully!")
+                else:
+                    st.warning("Please fill all fields")
+
+        conn2.close()
+
+    # -------------------------
+    # TODAY'S REMINDER TAB
+    # -------------------------
+    with tabs[5]:
+
+        conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
+        c2 = conn2.cursor()
+
+        st.subheader("📅 Today's Reminders")
+
+        today = str(date.today())
+
+        c2.execute(
+            "SELECT * FROM reminders WHERE username=? AND reminder_date=?",
+            (username, today)
+        )
+        rows = c2.fetchall()
+
+        if rows:
+            for row in rows:
+                col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
+
+                col1.write(f"💊 {row[2]}")
+                col2.write(f"💉 {row[3]}")
+                col3.write(f"🕒 {row[5]}")
+
+                if col4.button("❌", key=f"delete_{row[0]}"):
+                    c2.execute("DELETE FROM reminders WHERE id = ?", (row[0],))
+                    conn2.commit()
+                    st.rerun()
         else:
-            st.warning("Please fill all fields")
+            st.info("No reminders for today.")
 
-conn.close()
-        
-        #with st.form("reminder_form"):
-            #med = st.text_input("Medicine Name")
-            #time = st.time_input("Select Time")
-
-            #submit = st.form_submit_button("Add Reminder")
-
-        #if submit:
-            #st.success("Reminder Saved!")
-
-     with tabs[5]:
-         conn = sqlite3.connect("reminders.db", check_same_thread=False)
-         c = conn.cursor()
-
-         st.subheader("📅 Today's Reminders")
-
-         today = str(date.today())
-
-         c.execute("SELECT * FROM reminders WHERE reminder_date = ?", (today,))
-         rows = c.fetchall()
-
-         if rows:
-             for row in rows:
-                 col1, col2, col3, col4 = st.columns([3,2,2,1])
-
-                 col1.write(f"💊 {row[1]}")
-                 col2.write(f"💉 {row[2]}")
-                 col3.write(f"🕒 {row[4]}")
-
-        if col4.button("❌", key=f"delete_{row[0]}"):
-            c.execute("DELETE FROM reminders WHERE id = ?", (row[0],))
-            conn.commit()
-            st.rerun()
-                 
-        
-             
-    
-         else:
-             st.info("No reminders for today.")
-
-         conn.close()
+        conn2.close()
              
     
         
@@ -368,6 +366,7 @@ conn.close()
 
               
              
+
 
 
 
