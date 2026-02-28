@@ -275,10 +275,10 @@ else:
     
     with tabs[4]:
         with st.form("reminder_form"):
-        med = st.text_input("Medicine Name")
-        time = st.time_input("Select Time")
+            med = st.text_input("Medicine Name")
+            time = st.time_input("Select Time")
 
-        submit = st.form_submit_button("Add Reminder")
+            submit = st.form_submit_button("Add Reminder")
 
         if submit:
             st.success("Reminder Saved!")
@@ -295,6 +295,7 @@ else:
 
               
              
+
 
 
 
