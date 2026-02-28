@@ -1,4 +1,6 @@
 streamlit
+groq
 pandas
 sqlite3
 bcrypt
+
