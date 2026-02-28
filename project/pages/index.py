@@ -274,8 +274,7 @@ else:
 
     
     with tabs[4]:
-
-    st.subheader("💊 Medication Reminder System")
+        st.subheader("💊 Medication Reminder System")
 
     # ---------------------------
     # ADD REMINDER FORM
@@ -363,6 +362,9 @@ else:
                     st.rerun()
     else:
         st.info("No saved reminders yet.")
+        
+
+    
 
 
 
@@ -372,6 +374,7 @@ else:
 
               
              
+
 
 
 
