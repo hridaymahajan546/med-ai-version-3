@@ -4,6 +4,8 @@ import sqlite3
 import hashlib
 import os
 from groq import Groq
+import sqlite3
+from datetime import date
 
 # -------------------------
 #LOAD API KEY
@@ -165,7 +167,7 @@ else:
         st.session_state.logged_in = False
         st.rerun()
 
-    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat","REMINDER"])
+    tabs = st.tabs(["💊 Drug Checker", "⚠️ Allergies", "🩹 Side Effects", "🤖 AI Chat","REMINDER","TODAY'S REMINDER"])
 
     # -------------------------
     # DRUG CHECKER + RISK METER
@@ -274,14 +276,85 @@ else:
 
     
     with tabs[4]:
-        with st.form("reminder_form"):
-            med = st.text_input("Medicine Name")
-            time = st.time_input("Select Time")
+        conn = sqlite3.connect("reminders.db", check_same_thread=False)
+        c = conn.cursor()
 
-            submit = st.form_submit_button("Add Reminder")
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            medicine TEXT,
+            dosage TEXT,
+            reminder_date TEXT,
+            reminder_time TEXT
+)
+""")
+conn.commit()
 
-        if submit:
-            st.success("Reminder Saved!")
+st.subheader("⏰ Add Medication Reminder")
+
+with st.form("reminder_form"):
+    med_name = st.text_input("Medicine Name")
+    dosage = st.text_input("Dosage")
+    reminder_date = st.date_input("Select Date", value=date.today())
+    reminder_time = st.time_input("Select Time")
+
+    submit = st.form_submit_button("Save Reminder")
+
+    if submit:
+        if med_name and dosage:
+            c.execute(
+                "INSERT INTO reminders (medicine, dosage, reminder_date, reminder_time) VALUES (?, ?, ?, ?)",
+                (med_name, dosage, str(reminder_date), str(reminder_time))
+            )
+            conn.commit()
+            st.success("✅ Reminder Saved Successfully!")
+        else:
+            st.warning("Please fill all fields")
+
+conn.close()
+        
+        #with st.form("reminder_form"):
+            #med = st.text_input("Medicine Name")
+            #time = st.time_input("Select Time")
+
+            #submit = st.form_submit_button("Add Reminder")
+
+        #if submit:
+            #st.success("Reminder Saved!")
+
+     with tabs[5]:
+         conn = sqlite3.connect("reminders.db", check_same_thread=False)
+         c = conn.cursor()
+
+         st.subheader("📅 Today's Reminders")
+
+         today = str(date.today())
+
+         c.execute("SELECT * FROM reminders WHERE reminder_date = ?", (today,))
+         rows = c.fetchall()
+
+         if rows:
+             for row in rows:
+                 col1, col2, col3, col4 = st.columns([3,2,2,1])
+
+                 col1.write(f"💊 {row[1]}")
+                 col2.write(f"💉 {row[2]}")
+                 col3.write(f"🕒 {row[4]}")
+
+        if col4.button("❌", key=f"delete_{row[0]}"):
+            c.execute("DELETE FROM reminders WHERE id = ?", (row[0],))
+            conn.commit()
+            st.rerun()
+                 
+        
+             
+    
+         else:
+             st.info("No reminders for today.")
+
+         conn.close()
+             
+    
         
         
 
@@ -295,6 +368,7 @@ else:
 
               
              
+
 
 
 
