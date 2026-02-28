@@ -271,12 +271,91 @@ else:
             else:
                 st.markdown(f"<div style='text-align:left;background:#1b3a41;color:#2EC4B6;padding:10px;border-radius:15px;margin:5px;max-width:75%;'><b>MedSafe AI:</b><br>{message}</div>", unsafe_allow_html=True)
 
+# ==============================
+# DATABASE SETUP
+# ==============================
+
+import sqlite3
+from datetime import datetime, date
+import streamlit as st
+
+conn = sqlite3.connect("reminders.db", check_same_thread=False)
+c = conn.cursor()
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS reminders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    medicine TEXT,
+    dosage TEXT,
+    reminder_time TEXT,
+    frequency TEXT,
+    created_on TEXT
+)
+""")
+conn.commit()
+
+# ==============================
+# 💊 MEDICATION REMINDER SYSTEM
+# ==============================
+
+st.markdown("## 💊 Medication Reminder System")
+
+with st.form("add_reminder"):
+    med_name = st.text_input("Medicine Name")
+    dosage = st.text_input("Dosage (e.g., 1 tablet, 5ml)")
+    reminder_time = st.time_input("Select Time")
+    frequency = st.selectbox("Frequency", ["Daily", "Weekly"])
+    submit = st.form_submit_button("Add Reminder")
+
+    if submit:
+        if med_name and dosage:
+            c.execute("""
+            INSERT INTO reminders (medicine, dosage, reminder_time, frequency, created_on)
+            VALUES (?, ?, ?, ?, ?)
+            """, (
+                med_name,
+                dosage,
+                reminder_time.strftime("%H:%M"),
+                frequency,
+                str(date.today())
+            ))
+            conn.commit()
+            st.success("✅ Reminder Added Successfully!")
+        else:
+            st.error("Please fill all fields.")
+
+#SHOW AND DELETE REMINDERS
+st.markdown("---")
+st.markdown("### 📅 Your Saved Reminders")
+
+c.execute("SELECT * FROM reminders")
+rows = c.fetchall()
+
+if rows:
+    for row in rows:
+        reminder_id = row[0]
+        st.write(f"""
+        💊 **{row[1]}**  
+        Dosage: {row[2]}  
+        Time: {row[3]}  
+        Frequency: {row[4]}
+        """)
+
+        if st.button(f"❌ Delete {reminder_id}", key=reminder_id):
+            c.execute("DELETE FROM reminders WHERE id=?", (reminder_id,))
+            conn.commit()
+            st.rerun()
+else:
+    st.info("No reminders added yet.")
+
+
        
 
 
 
               
              
+
 
 
 
