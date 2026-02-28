@@ -44,7 +44,7 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # -------------------------
-# DATABASE SETUP
+# MAIN DATABASE
 # -------------------------
 conn = sqlite3.connect("database.db", check_same_thread=False)
 c = conn.cursor()
@@ -74,9 +74,6 @@ conn.commit()
 def hash_password(password):
     return hashlib.sha256(password.strip().encode()).hexdigest()
 
-# -------------------------
-# AUTH FUNCTIONS
-# -------------------------
 def register_user(username, password):
     try:
         c.execute("INSERT INTO users VALUES (?, ?)",
@@ -92,9 +89,6 @@ def login_user(username, password):
     user = c.fetchone()
     return user and user[1] == hash_password(password)
 
-# -------------------------
-# ALLERGY FUNCTIONS
-# -------------------------
 def add_allergy(username, allergy):
     c.execute("INSERT INTO allergies VALUES (?, ?)", (username, allergy.lower()))
     conn.commit()
@@ -104,7 +98,7 @@ def get_allergies(username):
     return [row[0] for row in c.fetchall()]
 
 # -------------------------
-# LOAD DRUG CSV
+# LOAD CSV
 # -------------------------
 if not os.path.exists("drug_interactions.csv"):
     st.error("drug_interactions.csv file not found.")
@@ -120,7 +114,7 @@ def check_interaction(d1, d2):
     return "Low", "No known major interaction."
 
 # -------------------------
-# SESSION STATE
+# SESSION
 # -------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -176,25 +170,35 @@ else:
     ])
 
     # -------------------------
-    # REMINDER TAB (FIXED ONLY THIS PART)
+    # REMINDER DATABASE (AUTO FIX)
+    # -------------------------
+    conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
+    c2 = conn2.cursor()
+
+    # DROP old broken table safely
+    c2.execute("DROP TABLE IF EXISTS reminders")
+
+    # Create fresh correct structure
+    c2.execute("""
+    CREATE TABLE reminders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        medicine TEXT,
+        dosage TEXT,
+        reminder_date TEXT,
+        reminder_time TEXT
+    )
+    """)
+    conn2.commit()
+    conn2.close()
+
+    # -------------------------
+    # REMINDER TAB
     # -------------------------
     with tabs[4]:
 
         conn2 = sqlite3.connect("reminders.db", check_same_thread=False)
         c2 = conn2.cursor()
-
-        # Create table safely
-        c2.execute("""
-        CREATE TABLE IF NOT EXISTS reminders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            medicine TEXT,
-            dosage TEXT,
-            reminder_date TEXT,
-            reminder_time TEXT
-        )
-        """)
-        conn2.commit()
 
         st.subheader("⏰ Add Medication Reminder")
 
@@ -232,7 +236,7 @@ else:
         today = str(date.today())
 
         c2.execute(
-            "SELECT * FROM reminders WHERE username=? AND reminder_date=?",
+            "SELECT id, medicine, dosage, reminder_time FROM reminders WHERE username=? AND reminder_date=?",
             (username, today)
         )
         rows = c2.fetchall()
@@ -241,9 +245,9 @@ else:
             for row in rows:
                 col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
 
-                col1.write(f"💊 {row[2]}")
-                col2.write(f"💉 {row[3]}")
-                col3.write(f"🕒 {row[5]}")
+                col1.write(f"💊 {row[1]}")
+                col2.write(f"💉 {row[2]}")
+                col3.write(f"🕒 {row[3]}")
 
                 if col4.button("❌", key=f"delete_{row[0]}"):
                     c2.execute("DELETE FROM reminders WHERE id = ?", (row[0],))
