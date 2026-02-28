@@ -205,7 +205,7 @@ else:
                 elif severity.lower() == "moderate":
                     st.warning(f"⚠️ MODERATE Severity Interaction\n\n{reason}")
                 else:
-                    st.success(f"✅ LOW / No Major Interaction\n\n{reason}")
+                    st.success(f"SAFE RISK:LOW / No Major Interaction\n\n{reason}")
 
                 # Save to history
                 c.execute("INSERT INTO history VALUES (?, ?, ?, ?)",
@@ -259,7 +259,7 @@ else:
                 with st.spinner("Fetching side effects..."):
                     try:
                         response = client.chat.completions.create(
-                            model="llama3-8b-8192",
+                            model="llama-3.1-8b-instant",
                             messages=[
                                 {"role": "system", "content": "You are a medical assistant. Provide clear, concise side effects of medications. Always advise consulting a doctor."},
                                 {"role": "user", "content": f"What are the common and serious side effects of {drug_se}?"}
@@ -294,7 +294,7 @@ else:
                         ] + st.session_state.chat_history
 
                         response = client.chat.completions.create(
-                            model="llama3-8b-8192",
+                            model="llama-3.1-8b-instant",
                             messages=messages
                         )
                         reply = response.choices[0].message.content
@@ -376,6 +376,7 @@ else:
             st.info("No reminders for today.")
 
         conn2.close()
+
 
 
 
