@@ -274,94 +274,15 @@ else:
 
     
     with tabs[4]:
-        st.subheader("💊 Medication Reminder System")
-
-    # ---------------------------
-    # ADD REMINDER FORM
-    # ---------------------------
-    with st.form("add_reminder"):
-        col1, col2 = st.columns(2)
-
-        with col1:
-            med_name = st.text_input("Medicine Name")
-            dosage = st.text_input("Dosage")
-
-        with col2:
-            reminder_time = st.time_input("Reminder Time", value=time(9,0))
-            frequency = st.selectbox("Frequency", ["Daily", "Weekly"])
+        with st.form("reminder_form"):
+        med = st.text_input("Medicine Name")
+        time = st.time_input("Select Time")
 
         submit = st.form_submit_button("Add Reminder")
 
         if submit:
-            if med_name and dosage:
-                c.execute("""INSERT INTO reminders
-                    (username, medicine, dosage, reminder_time, frequency, created_on)
-                    VALUES (?, ?, ?, ?, ?, ?)""",
-                    (username,
-                     med_name.strip(),
-                     dosage.strip(),
-                     reminder_time.strftime("%H:%M"),
-                     frequency,
-                     str(date.today())))
-                conn.commit()
-                st.success("✅ Reminder Saved Successfully!")
-                st.rerun()
-            else:
-                st.error("Please fill all fields.")
-
-    st.markdown("---")
-
-    # ---------------------------
-    # TODAY'S REMINDERS
-    # ---------------------------
-    st.subheader("📅 Today's Reminders")
-
-    current_time = datetime.now().strftime("%H:%M")
-
-    c.execute("""SELECT * FROM reminders
-                 WHERE username=?""", (username,))
-    reminders = c.fetchall()
-
-    today_reminders = []
-    all_reminders = []
-
-    for r in reminders:
-        all_reminders.append(r)
-        if r[4] == current_time:
-            today_reminders.append(r)
-
-    if today_reminders:
-        for r in today_reminders:
-            st.success(f"🔔 Time to take {r[2]} ({r[3]})")
-    else:
-        st.info("No reminder at this moment.")
-
-    st.markdown("---")
-
-    # ---------------------------
-    # ALL SAVED REMINDERS
-    # ---------------------------
-    st.subheader("💾 All Saved Reminders")
-
-    if all_reminders:
-        for r in all_reminders:
-            col1, col2 = st.columns([5,1])
-
-            with col1:
-                st.markdown(f"""
-                💊 **{r[2]}**  
-                Dosage: {r[3]}  
-                Time: {r[4]}  
-                Frequency: {r[5]}
-                """)
-
-            with col2:
-                if st.button("❌", key=f"delete_{r[0]}"):
-                    c.execute("DELETE FROM reminders WHERE id=?", (r[0],))
-                    conn.commit()
-                    st.rerun()
-    else:
-        st.info("No saved reminders yet.")
+            st.success("Reminder Saved!")
+        
         
 
     
@@ -374,6 +295,7 @@ else:
 
               
              
+
 
 
 
